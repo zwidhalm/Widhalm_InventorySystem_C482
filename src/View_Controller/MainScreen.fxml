@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.MainScreenController">
+   <children>
+      <SplitPane dividerPositions="0.5050505050505051" layoutX="-3.0" layoutY="102.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <TableView fx:id="mainPartTableView" layoutX="-3.0" layoutY="128.0" prefHeight="171.0" prefWidth="307.0">
+                    <columns>
+                      <TableColumn fx:id="mainPartIDColumn" prefWidth="75.0" text="Part ID" />
+                      <TableColumn fx:id="mainPartNameColumn" prefWidth="75.0" text="Part Name" />
+                        <TableColumn fx:id="mainPartInventoryColumn" prefWidth="75.0" text="Inventory Level" />
+                        <TableColumn fx:id="mainPartPriceColumn" prefWidth="75.0" text="Price Per Unit" />
+                    </columns>
+                  </TableView>
+                  <HBox layoutY="52.0" prefHeight="56.0" prefWidth="299.0">
+                     <children>
+                        <Label fx:id="mainPartsLabel" prefHeight="29.0" prefWidth="96.0" text="Parts">
+                           <font>
+                              <Font name="Courier New Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="mainPartSeachLabel" mnemonicParsing="false" onAction="#handleMainPartSeachEvent" text="Search" />
+                        <TextField fx:id="mainPartSearchTextField" />
+                     </children>
+                  </HBox>
+                  <Label layoutX="1.0" layoutY="1.0" prefHeight="48.0" prefWidth="293.0" text="Inventory Management System">
+                     <font>
+                        <Font name="Courier New Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <ButtonBar layoutY="299.0" prefHeight="40.0" prefWidth="270.0">
+                    <buttons>
+                      <Button fx:id="mainPartAdd" mnemonicParsing="false" onAction="#handleMainAddPartEvent" text="Add" />
+                        <Button fx:id="mainPartModify" mnemonicParsing="false" onAction="#handleMainModifyPartEvent" text="Modify" />
+                        <Button fx:id="mainPartDelete" mnemonicParsing="false" onAction="#handleMainDeletePartEvent" text="Delete" />
+                    </buttons>
+                  </ButtonBar>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <TableView fx:id="mainProductTableView" layoutY="128.0" prefHeight="171.0" prefWidth="293.0">
+                    <columns>
+                      <TableColumn fx:id="mainProductsIDColumn" prefWidth="75.0" text="Product ID" />
+                      <TableColumn fx:id="mainProductsNameColumn" prefWidth="75.0" text="Product Name" />
+                        <TableColumn fx:id="mainProductsInventoryColumn" prefWidth="75.0" text="Inventory Level" />
+                        <TableColumn fx:id="mainProductsPriceColumn" prefWidth="75.0" text="Price Per Unit" />
+                    </columns>
+                  </TableView>
+                  <HBox layoutY="53.0" prefHeight="66.0" prefWidth="293.0">
+                     <children>
+                        <Label fx:id="mainProductsLabel" prefHeight="26.0" prefWidth="92.0" text="Products">
+                           <font>
+                              <Font name="Courier New Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="mainProductsSearch" mnemonicParsing="false" onAction="#handleMainProductsEvent" text="Search" />
+                        <TextField fx:id="mainProductsSearchTextfield" />
+                     </children>
+                  </HBox>
+                  <ButtonBar layoutX="2.0" layoutY="299.0" prefHeight="40.0" prefWidth="236.0">
+                    <buttons>
+                      <Button fx:id="mainProductsAddLabel" mnemonicParsing="false" onAction="#handleMainAddProductEvent" text="Add" />
+                        <Button fx:id="mainModifyProductsLabel" mnemonicParsing="false" onAction="#handleMainModifyProductsEvent" text="Modify" />
+                        <Button fx:id="mainProductDelete" mnemonicParsing="false" onAction="#handleMainProductDeleteEvent" text="Delete" />
+                    </buttons>
+                  </ButtonBar>
+                  <Button fx:id="MainScreentExitLabel" layoutX="198.0" layoutY="359.0" mnemonicParsing="false" onAction="#handleMainScreenExitEvent" text="Exit" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
