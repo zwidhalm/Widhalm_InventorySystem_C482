@@ -10,7 +10,6 @@ import View_Controller.MainScreenController;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -20,12 +19,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.lang.String;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.event.ActionEvent;
 
 public class AddPartController implements Initializable {
 
@@ -94,9 +96,12 @@ public class AddPartController implements Initializable {
     
     private ToggleGroup radioButtonToggleGroup;
     private Part part;
+    private InHouse inHousePart;
+    private OutSourced outSourcedPart;
     private Stage dialogStage;
-    private boolean saveClicked;
-   
+    private boolean saveClicked = false;
+    private MainApp mainApp;
+    private  ObservableList<Part> tempParts = FXCollections.observableArrayList();
 
 
     @FXML
@@ -110,6 +115,10 @@ public class AddPartController implements Initializable {
     void handleAddPartOutSourcedButtonEvent(ActionEvent event) {
         addPartDecisionLabel.setText("Company Name");
         addPartDecisionTextField.clear();
+    }
+    
+    public void addPart(Part part){
+        tempParts.add(part);
     }
 
 
@@ -150,21 +159,32 @@ public class AddPartController implements Initializable {
     public boolean isSaveClicked(){
         return saveClicked;
     }
+    
 
     /**
      * Called when the user clicks ok.
      */
     @FXML
-    private void handlePartSaveEvent(ActionEvent event) {
-        if (isInputValid()) {
-            part.setPartID(Integer.parseInt(addPartIDTextField.getText()));
-            part.setPartName(addPartNameTextField.getText());
-            part.setPartPrice(Double.parseDouble(addPartPriceTextField.getText()));
-            part.setMax(Integer.parseInt(addPartMaxTextField.getText()));
-            part.setMin(Integer.parseInt(addPartMinTextField.getText()));
-            part.setInStock(Integer.parseInt(addPartInvTextField.getText()));
+    private void handleAddPartSaveEvent(ActionEvent event) {
+        int partID = Integer.parseInt(addPartIDTextField.getText());
+        String partName = addPartNameTextField.getText();
+        Double price = Double.parseDouble(addPartPriceTextField.getText());
+        int max = Integer.parseInt(addPartMaxTextField.getText());
+        int min = Integer.parseInt(addPartMinTextField.getText());
+        int inStock = Integer.parseInt(addPartInvTextField.getText());
+        if ( addPartInHouseButtonLabel.isSelected()) {
+            int machineID = Integer.parseInt(addPartDecisionTextField.getText());
+            part = new InHouse(partID,partName, price, max, min, inStock, machineID);
             
-
+            tempParts.add(part);
+            saveClicked = true;
+            dialogStage.close();
+        }
+        else if(addPartOutSourcedButtonLabel.isSelected()){
+            String companyName = addPartDecisionTextField.getText();
+            part = new OutSourced(partID,partName, price, max, min, inStock, companyName);
+            
+            tempParts.add(part);
             saveClicked = true;
             dialogStage.close();
         }
@@ -174,7 +194,7 @@ public class AddPartController implements Initializable {
      * Called when the user clicks cancel.
      */
     @FXML
-    private void handleAppPartCancelEvent(ActionEvent event) {
+    private void handleAddPartCancelEvent(ActionEvent event) {
         dialogStage.close();
     }
 
@@ -190,14 +210,14 @@ public class AddPartController implements Initializable {
             errorMessage += "Not a valid ID\n"; 
         }
         if (addPartNameTextField.getText() == null || addPartNameTextField.getText().length() == 0) {
-            errorMessage += "Not a valid name\n"; 
+            errorMessage += "Not a valid Name\n"; 
         }
         if (addPartPriceTextField.getText() == null || addPartPriceTextField.getText().length() == 0) {
-            errorMessage += "Not a valid price\n"; 
+            errorMessage += "Not a valid Price\n"; 
         }
 
         if (addPartMaxTextField.getText() == null || addPartMaxTextField.getText().length() == 0) {
-            errorMessage += "Not a valid max value\n"; 
+            errorMessage += "Not a valid Max value\n"; 
 //        } else {
 //            // try to parse the postal code into an int.
 //            try {
@@ -207,16 +227,13 @@ public class AddPartController implements Initializable {
 //            }
         }
 
-        if (addPartMinTextField.getText() == null || addPartMinTextField.getText().length() == 0 || addPartMinTextField.getText()) {
-            errorMessage += "No valid city!\n"; 
+        if (addPartMinTextField.getText() == null || addPartMinTextField.getText().length() == 0 || 
+                Integer.parseInt(addPartMinTextField.getText()) > Integer.parseInt(addPartMaxTextField.getText())) {
+            errorMessage += "Not a valid Min value \n"; 
         }
 
-        if (birthdayField.getText() == null || birthdayField.getText().length() == 0) {
-            errorMessage += "No valid birthday!\n";
-        } else {
-            if (!DateUtil.validDate(birthdayField.getText())) {
-                errorMessage += "No valid birthday. Use the format dd.mm.yyyy!\n";
-            }
+        if (addPartInvTextField.getText() == null || addPartInvTextField.getText().length() == 0) {
+            errorMessage += "Not valid Inventory Value\n";
         }
 
         if (errorMessage.length() == 0) {
@@ -225,8 +242,8 @@ public class AddPartController implements Initializable {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(dialogStage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
+            alert.setTitle("Invalid TextFields");
+            alert.setHeaderText("Please Fix TextField Errors");
             alert.setContentText(errorMessage);
             
             alert.showAndWait();
@@ -234,6 +251,13 @@ public class AddPartController implements Initializable {
             return false;
         }
     }
+    
+    public Part getPart(){
+        return tempParts.get(0);
+        
+    }
+    
+
 }
 
 

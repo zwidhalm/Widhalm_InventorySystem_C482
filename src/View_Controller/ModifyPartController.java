@@ -176,12 +176,13 @@ public class ModifyPartController implements Initializable {
     
     public void setPart(Part part) {
         this.part = part;
-
-        modifyPartIDTextField.setText((part.getPartID()));
+        
+        
+        modifyPartIDTextField.setText(Integer.toString(part.getPartID()));
         modifyPartNameTextField.setText(part.getPartName());
-        modifyPartPriceTextField.setText((part.getPartPrice()));
-        modifyPartMaxTextField.setText((part.getMax()));
-        modifyPartMinTextField.setText((part.getMin()));
+        modifyPartPriceTextField.setText(Double.toString(part.getPartPrice()));
+        modifyPartMaxTextField.setText(Integer.toString(part.getMax()));
+        modifyPartMinTextField.setText(Integer.toString(part.getMin()));
         
     }
 
@@ -194,36 +195,33 @@ public class ModifyPartController implements Initializable {
         String errorMessage = "";
 
         if (modifyPartIDTextField.getText() == null || modifyPartIDTextField.getText().length() == 0) {
-            errorMessage += "No valid first name!\n"; 
+            errorMessage += "Not a valid ID\n"; 
         }
         if (modifyPartNameTextField.getText() == null || modifyPartNameTextField.getText().length() == 0) {
-            errorMessage += "No valid last name!\n"; 
+            errorMessage += "Not a valid Name\n"; 
         }
         if (modifyPartPriceTextField.getText() == null || modifyPartPriceTextField.getText().length() == 0) {
-            errorMessage += "No valid street!\n"; 
+            errorMessage += "Not a valid Price\n"; 
         }
 
         if (modifyPartMaxTextField.getText() == null || modifyPartMaxTextField.getText().length() == 0) {
-            errorMessage += "No valid postal code!\n"; 
-        } else {
-            // try to parse the postal code into an int.
-            try {
-                Integer.parseInt(modifyPartMaxTextField.getText());
-            } catch (NumberFormatException e) {
-                errorMessage += "No valid postal code (must be an integer)!\n"; 
-            }
+            errorMessage += "Not a valid Max value\n"; 
+//        } else {
+//            // try to parse the postal code into an int.
+//            try {
+//                Integer.parseInt(addPartMaxTextField.getText());
+//            } catch (NumberFormatException e) {
+//                errorMessage += "No valid postal code (must be an integer)!\n"; 
+//            }
         }
 
-        if (cityField.getText() == null || cityField.getText().length() == 0) {
-            errorMessage += "No valid city!\n"; 
+        if (modifyPartMinTextField.getText() == null || modifyPartMinTextField.getText().length() == 0 || 
+                Integer.parseInt(modifyPartMinTextField.getText()) > Integer.parseInt(modifyPartMaxTextField.getText())) {
+            errorMessage += "Not a valid Min value \n"; 
         }
 
-        if (birthdayField.getText() == null || birthdayField.getText().length() == 0) {
-            errorMessage += "No valid birthday!\n";
-        } else {
-            if (!DateUtil.validDate(birthdayField.getText())) {
-                errorMessage += "No valid birthday. Use the format dd.mm.yyyy!\n";
-            }
+        if (modifyPartInvTextField.getText() == null || modifyPartInvTextField.getText().length() == 0) {
+            errorMessage += "Not valid Inventory Value\n";
         }
 
         if (errorMessage.length() == 0) {
@@ -232,8 +230,8 @@ public class ModifyPartController implements Initializable {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(dialogStage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
+            alert.setTitle("Invalid TextFields");
+            alert.setHeaderText("Please Fix TextField Errors");
             alert.setContentText(errorMessage);
             
             alert.showAndWait();

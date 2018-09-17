@@ -28,9 +28,10 @@ import Model.OutSourced;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 
-public class MainScreenController {
+public class MainScreenController implements Initializable {
 
     @FXML
     private ResourceBundle resources;
@@ -104,7 +105,7 @@ public class MainScreenController {
     @FXML
     private Button MainScreentExitLabel;
     
-    private Part tempPart;
+    //private Part part;
     private MainApp mainApp;
 
     
@@ -114,11 +115,22 @@ public class MainScreenController {
 
     @FXML
     void handleMainAddPartEvent(ActionEvent event) throws IOException {
-        Part part = tempPart;
-        boolean okClicked= mainApp.showAddPartScreen(tempPart);
-        if (okClicked) {
-            mainApp.getPartData().add(tempPart);
-        }
+        //InHouse inHousePart = new InHouse();
+        //OutSourced outSourcedPart = new OutSourced();
+        //boolean saveClicked= 
+        Part part = mainApp.showAddPartScreen();
+//        if (saveClicked) {
+//            if(outSourcedPart == null){
+//            mainApp.getPartData().add(inHousePart);
+//            }
+//            else if(inHousePart == null){
+//                mainApp.getPartData().add(outSourcedPart);
+//
+//            }
+//        }
+        mainApp.addPart(part);
+        
+
     }
     
     
@@ -237,10 +249,18 @@ public class MainScreenController {
     
 
     
-    
 
-    @FXML
-    void initialize() {
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+
+        // Add observable list data to the table
+        mainPartTableView.setItems(mainApp.getPartData());
+        mainProductTableView.setItems(mainApp.getProductData());
+    }
+
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         mainPartIDColumn.setCellValueFactory(cellData -> cellData.getValue().partIDProperty().asObject());
         mainPartNameColumn.setCellValueFactory(cellData -> cellData.getValue().partNameProperty());
         mainPartInventoryColumn.setCellValueFactory(cellData -> cellData.getValue().stockProperty().asObject());
@@ -280,17 +300,7 @@ public class MainScreenController {
 //        // 5. Add sorted (and filtered) data to the table.
 //        mainPartTableView.setItems(sortedData);  
        
-    }
     
-    
-    
-
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
-
-        // Add observable list data to the table
-        mainPartTableView.setItems(mainApp.getPartData());
-        mainProductTableView.setItems(mainApp.getProductData());
     }
 
     

@@ -5,6 +5,7 @@
  */
 package Model;
 
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -31,17 +32,16 @@ public class OutSourced extends Part {
     public OutSourced() {
     }
     
-    
 
-    public static String getCompanyName() {
-        return companyName.get();
+    public final String getCompanyName() {
+        return companyNameProperty().get();
     }
 
-    public void setCompanyID(StringProperty companyID) {
-        this.companyName = companyID;
+    public final void setCompanyName(String companyName) {
+        companyNameProperty().set(companyName);
     }
     
-    public static StringProperty companyNameProperty(){
+    public StringProperty companyNameProperty (){
         return companyName;
     }
     

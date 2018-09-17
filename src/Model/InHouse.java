@@ -33,17 +33,15 @@ public class InHouse extends Part {
     }
 
     
-    
-
-    public static int getMachineID() {
-        return machineID.get();
+    public final int getMachineID() {
+        return machineIDProperty().get();
     }
 
-    public void setMachineID(IntegerProperty machineID) {
-        this.machineID = machineID;
+    public final void setMachineID(int machineID) {
+        machineIDProperty().set(machineID);
     }
     
-    public IntegerProperty machineIDProperty() {
+    public IntegerProperty machineIDProperty (){
         return machineID;
     }
     

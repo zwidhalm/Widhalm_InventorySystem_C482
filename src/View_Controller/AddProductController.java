@@ -116,7 +116,7 @@ public class AddProductController {
     @FXML
     private TextField addProductMinTextField;
     private Stage dialogStage;
-    private boolean saveClicked;
+    private boolean saveClicked = false;
     private Product product;
 
     //@Override
@@ -158,7 +158,7 @@ public class AddProductController {
      * Called when the user clicks ok.
      */
     @FXML
-    private void handlePartSaveEvent(ActionEvent event) {
+    private void handleProductSaveEvent(ActionEvent event) {
         if (isInputValid()) {
             product.setProductID(Integer.parseInt(addProductIDTextfield.getText()));
             product.setProductName(addProductNameTextField.getText());
@@ -177,7 +177,7 @@ public class AddProductController {
      * Called when the user clicks cancel.
      */
     @FXML
-    private void handleAppPartCancelEvent(ActionEvent event) {
+    private void handleAddProductCancelEvent(ActionEvent event) {
         dialogStage.close();
     }
 
@@ -190,36 +190,33 @@ public class AddProductController {
         String errorMessage = "";
 
         if (addProductIDTextfield.getText() == null || addProductIDTextfield.getText().length() == 0) {
-            errorMessage += "No valid first name!\n"; 
+            errorMessage += "Not a valid ID\n"; 
         }
         if (addProductNameTextField.getText() == null || addProductNameTextField.getText().length() == 0) {
-            errorMessage += "No valid last name!\n"; 
+            errorMessage += "Not a valid Name\n"; 
         }
         if (addProductPriceTextField.getText() == null || addProductPriceTextField.getText().length() == 0) {
-            errorMessage += "No valid street!\n"; 
+            errorMessage += "Not a valid Price\n"; 
         }
 
         if (addProductPriceMaxField.getText() == null || addProductPriceMaxField.getText().length() == 0) {
-            errorMessage += "No valid postal code!\n"; 
-        } else {
-            // try to parse the postal code into an int.
-            try {
-                Integer.parseInt(addProductPriceMaxField.getText());
-            } catch (NumberFormatException e) {
-                errorMessage += "No valid postal code (must be an integer)!\n"; 
-            }
+            errorMessage += "Not a valid Max value\n"; 
+//        } else {
+//            // try to parse the postal code into an int.
+//            try {
+//                Integer.parseInt(addProductPriceMaxField.getText());
+//            } catch (NumberFormatException e) {
+//                errorMessage += "No valid postal code (must be an integer)!\n"; 
+//            }
         }
 
-        if (cityField.getText() == null || cityField.getText().length() == 0) {
-            errorMessage += "No valid city!\n"; 
+        if (addProductMinTextField.getText() == null || addProductMinTextField.getText().length() == 0 || 
+                Integer.parseInt(addProductMinTextField.getText()) > Integer.parseInt(addProductPriceMaxField.getText())) {
+            errorMessage += "Not a valid Min value \n"; 
         }
 
-        if (birthdayField.getText() == null || birthdayField.getText().length() == 0) {
-            errorMessage += "No valid birthday!\n";
-        } else {
-            if (!DateUtil.validDate(birthdayField.getText())) {
-                errorMessage += "No valid birthday. Use the format dd.mm.yyyy!\n";
-            }
+        if (addProductInvTextField.getText() == null || addProductInvTextField.getText().length() == 0) {
+            errorMessage += "Not a valid Inventory value\n";
         }
 
         if (errorMessage.length() == 0) {
@@ -228,8 +225,8 @@ public class AddProductController {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(dialogStage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
+            alert.setTitle("Invalid TextFields");
+            alert.setHeaderText("Please Fix TextField Errors");
             alert.setContentText(errorMessage);
             
             alert.showAndWait();

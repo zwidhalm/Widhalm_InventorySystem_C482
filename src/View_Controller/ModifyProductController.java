@@ -218,34 +218,34 @@ public class ModifyProductController implements Initializable {
         String errorMessage = "";
 
         if (modifyProductIDTextField.getText() == null || modifyProductIDTextField.getText().length() == 0) {
-            errorMessage += "No valid first name!\n"; 
+            errorMessage += "Not a valid ID\n"; 
         }
         if (modifyProductNameTextField.getText() == null || modifyProductNameTextField.getText().length() == 0) {
-            errorMessage += "No valid last name!\n"; 
+            errorMessage += "Not a valid Name\n"; 
         }
         if (modifyProductPriceTextField.getText() == null || modifyProductPriceTextField.getText().length() == 0) {
-            errorMessage += "No valid street!\n"; 
+            errorMessage += "Not a valid Price\n"; 
         }
 
         if (modifyProductPriceMaxField.getText() == null || modifyProductPriceMaxField.getText().length() == 0) {
-            errorMessage += "No valid postal code!\n"; 
-        } else {
-            // try to parse the postal code into an int.
-            try {
-                Integer.parseInt(modifyPartMaxTextField.getText());
-            } catch (NumberFormatException e) {
-                errorMessage += "No valid postal code (must be an integer)!\n"; 
-            }
+            errorMessage += "Not a valid Max value\n"; 
+//        } else {
+//            // try to parse the postal code into an int.
+//            try {
+//                Integer.parseInt(addProductPriceMaxField.getText());
+//            } catch (NumberFormatException e) {
+//                errorMessage += "No valid postal code (must be an integer)!\n"; 
+//            }
         }
 
-        if (cityField.getText() == null || cityField.getText().length() == 0) {
-            errorMessage += "No valid city!\n"; 
+        if (modifyProductMinTextField.getText() == null || modifyProductMinTextField.getText().length() == 0 || 
+                Integer.parseInt(modifyProductMinTextField.getText()) > Integer.parseInt(modifyProductPriceMaxField.getText())) {
+            errorMessage += "Not a valid Min value \n"; 
         }
 
-        if (birthdayField.getText() == null || birthdayField.getText().length() == 0) {
-            errorMessage += "No valid birthday!\n";
-        } 
-        
+        if (modifyProductInvTextField.getText() == null || modifyProductInvTextField.getText().length() == 0) {
+            errorMessage += "Not a valid Inventory value\n";
+        }
 
         if (errorMessage.length() == 0) {
             return true;
@@ -253,8 +253,8 @@ public class ModifyProductController implements Initializable {
             // Show the error message.
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(dialogStage);
-            alert.setTitle("Invalid Fields");
-            alert.setHeaderText("Please correct invalid fields");
+            alert.setTitle("Invalid TextFields");
+            alert.setHeaderText("Please Fix TextField Errors");
             alert.setContentText(errorMessage);
             
             alert.showAndWait();
@@ -262,7 +262,24 @@ public class ModifyProductController implements Initializable {
             return false;
         }
     }
+    
+    public void setProduct(Product product) {
+        this.product = product;
+        
+        
+        modifyProductIDTextField.setText(Integer.toString(product.getProductID()));
+        modifyProductNameTextField.setText(product.getName());
+        modifyProductPriceTextField.setText(Double.toString(product.getPrice()));
+        modifyProductPriceMaxField.setText(Integer.toString(product.getMax()));
+        modifyProductMinTextField.setText(Integer.toString(product.getMin()));
+        
+    }
+   
 }
+
+        
+    
+
 
 
    

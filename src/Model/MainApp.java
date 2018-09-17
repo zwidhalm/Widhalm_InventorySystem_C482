@@ -32,7 +32,8 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("AddressApp");
+        this.primaryStage.setTitle("Inventory Managemnent System");
+     
 
         initRootLayout();
 
@@ -44,17 +45,20 @@ public class MainApp extends Application {
      */
     public void initRootLayout() {
         try {
-        // Load person overview.
+        // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/PersonOverview.fxml"));
-            AnchorPane personOverview = (AnchorPane) loader.load();
-        
-        // Set person overview into the center of root layout.
-            //rootLayout.setCenter(personOverview);
-
-        // Give the controller access to the main app.
+            loader.setLocation(MainApp.class.getResource("/View_Controller/MainScreen.fxml"));
+            rootLayout = (AnchorPane) loader.load();
+            
+            // Give the controller access to the main app.
             MainScreenController controller = loader.getController();
             controller.setMainApp(this);
+            
+            // Show the scene containing the root layout.
+            Scene scene = new Scene(rootLayout);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -105,7 +109,11 @@ public class MainApp extends Application {
     public void deletePart(Part part){
         allParts.remove(part);
     }
-    public boolean showAddPartScreen(Part part) {
+    
+    public void addPart(Part part){
+        allParts.add(part);
+    }
+    public Part showAddPartScreen() {
         try {
         // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -128,10 +136,11 @@ public class MainApp extends Application {
         // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
-            return controller.isSaveClicked();
+            return controller.getPart();
+            
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return new InHouse();
         }
     }
 
@@ -166,7 +175,7 @@ public class MainApp extends Application {
         }
     }
     
-        public boolean showAddProductScreen(Product Product) {
+    public boolean showAddProductScreen(Product Product) {
         try {
         // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -196,7 +205,7 @@ public class MainApp extends Application {
         }
     }
         
-        public boolean showModifyProductScreen(Product Product) {
+    public boolean showModifyProductScreen(Product Product) {
         try {
         // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -214,6 +223,7 @@ public class MainApp extends Application {
         // Set the person into the controller.
             AddPartController controller = loader.getController();
             controller.setDialogStage(dialogStage);
+            //controller.setProduct();
 
 
         // Show the dialog and wait until the user closes it
@@ -232,6 +242,14 @@ public class MainApp extends Application {
     
     public void updatePart(int index, Part part){
         allParts.set(index, part);
+    }
+    
+    public int getProductIndex(Product product){
+        return products.indexOf(product);
+    }
+    
+    public void updateProduct(int index, Product product){
+        products.set(index, product);
     }
 
  
