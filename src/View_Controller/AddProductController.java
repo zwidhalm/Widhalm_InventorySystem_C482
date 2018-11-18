@@ -178,26 +178,20 @@ public class AddProductController implements Initializable {
             int min = Integer.parseInt(addProductMinTextField.getText());
             int inStock = Integer.parseInt(addProductInvTextField.getText());
             
-//            mProduct.setProductID(productID);
-//            mProduct.setProductName(productName);
-//            mProduct.setProductPrice(productPrice);
-//            mProduct.setMax(max);
-//            mProduct.setMin(min);
-//            mProduct.setInStock(inStock);
-            
             Product product = new Product(productID, productName, productPrice, max, min, inStock);
-            //TODO: add parts in second tableview to associatedParts map in mainApp
-     
+
             addPartToMainList(product);
             tempProducts.add(product);
             tempParts.clear();
             
-            //product.addPart
+
             saveClicked = true;
             dialogStage.close();
         }
     }
     
+    
+    //Adds part from main tableview to associated part tableiview
     @FXML
     private void handleAddProductAddButtonEvent(ActionEvent event) {
         Part selectedPart = addProductTableView1.getSelectionModel().getSelectedItem();
@@ -246,6 +240,10 @@ public class AddProductController implements Initializable {
 
     
     
+    /**Checks that input is valid, based on the criteria that 
+     * product price cannot be less than parts price
+     * 
+     */
     
     private boolean checkValid(){
         ObservableList<Part> partData =  addProductTableView2.getItems();
@@ -264,62 +262,7 @@ public class AddProductController implements Initializable {
         }
         return true;
     }
-    /**
-     * Validates the user input in the text fields.
-     * 
-     * @return true if the input is valid
-     */
-//    private boolean isInputValid() {
-//        String errorMessage = "";
-//        ArrayList<String> errorList = new ArrayList<String>();
-//
-//        if (addProductIDTextfield.getText() == null || addProductIDTextfield.getText().length() == 0) {
-//            errorMessage += "Not a valid ID\n"; 
-//        }
-//        if (addProductNameTextField.getText() == null || addProductNameTextField.getText().length() == 0) {
-//            errorMessage += "Not a valid Name\n"; 
-//        }
-//        try{
-//            double Price = Double.parseDouble(addProductPriceTextField.getText());
-//        }catch (NumberFormatException nfe){
-//            errorMessage += "Not a valid Price: Enter a Price\n"; 
-//        }
-//
-//        if (addProductPriceMaxField.getText() == null || addProductPriceMaxField.getText().length() == 0) {
-//            errorMessage += "Not a valid Max value\n"; 
-////        } else {
-////            // try to parse the postal code into an int.
-////            try {
-////                Integer.parseInt(addProductPriceMaxField.getText());
-////            } catch (NumberFormatException e) {
-////                errorMessage += "No valid postal code (must be an integer)!\n"; 
-////            }
-//        }
-//
-//        if (addProductMinTextField.getText() == null || addProductMinTextField.getText().length() == 0 || 
-//                Integer.parseInt(addProductMinTextField.getText()) > Integer.parseInt(addProductPriceMaxField.getText())) {
-//            errorMessage += "Not a valid Min value \n"; 
-//        }
-//
-//        if (addProductInvTextField.getText() == null || addProductInvTextField.getText().length() == 0) {
-//            errorMessage += "Not a valid Inventory value\n";
-//        }
-//
-//        if (errorMessage.length() == 0) {
-//            return true;
-//        } else {
-//            // Show the error message.
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.initOwner(dialogStage);
-//            alert.setTitle("Invalid TextFields");
-//            alert.setHeaderText("Please Fix TextField Errors");
-//            alert.setContentText(errorMessage);
-//            
-//            alert.showAndWait();
-//            
-//            return false;
-//        }
-//    }
+    
     
     public void setMainApp(MainApp mainApp){
         this.mainApp = mainApp;
@@ -333,69 +276,17 @@ public class AddProductController implements Initializable {
         
     }
     
+    
+    //Searches that main Part tableview
     public void handleAddProductSearchTableViewEvent(){
         ObservableList<Part> partData =  addProductTableView1.getItems();
+        ObservableList<Part> searchResultData = FXCollections.observableArrayList();
+        searchResultData.clear();
         
+        int textFieldSearch = 0;
         try{
-            int textFieldSearch = Integer.parseInt(addProductSearchTextField.getText());
-            for (Part part : partData){
-                if(part.getPartID() == textFieldSearch){
-                    partData.clear();
-                    partData.add(part);
-                    addProductTableView1.setItems((partData));
-                
-                }
-                else {
-            // Nothing selected.
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.initOwner(mainApp.getPrimaryStage());
-                alert.setTitle("No Match");
-                alert.setHeaderText("No Part Found");
-                alert.setContentText("The ID entered did not match any ID in the Inventory");
-
-                alert.showAndWait();
-                }
-            }
-        
-            }
-        catch (NumberFormatException nfe){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.initOwner(mainApp.getPrimaryStage());
-            alert.setTitle("No Match");
-            alert.setHeaderText("No Product Found");
-            alert.setContentText("The ID entered was not valid");
-
-            alert.showAndWait();  
+            textFieldSearch = Integer.parseInt(addProductSearchTextField.getText());
         }
-
-
-    }
-    
-    public void handleAddProductSearchTableView2Event(){
-        ObservableList<Part> partData =  addProductTableView2.getItems();
-        
-        try{
-            int textFieldSearch = Integer.parseInt(addProductSearchTextField2.getText());
-            for (Part part : partData){
-                if(part.getPartID() == textFieldSearch){
-                    partData.clear();
-                    partData.add(part);
-                    addProductTableView2.setItems((partData));
-                
-                }
-                else {
-            // Nothing selected.
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.initOwner(mainApp.getPrimaryStage());
-                alert.setTitle("No Match");
-                alert.setHeaderText("No Part Found");
-                alert.setContentText("The ID entered did not match any ID in the Inventory");
-
-                alert.showAndWait();
-                }
-            }
-        
-            }
         catch (NumberFormatException nfe){
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.initOwner(mainApp.getPrimaryStage());
@@ -405,9 +296,64 @@ public class AddProductController implements Initializable {
 
             alert.showAndWait();  
         }
+        for (Part part : partData){
+            if(part.getPartID() == textFieldSearch){
+                searchResultData.add(part);
+                addProductTableView1.setItems((searchResultData));
+            }
+        }
+            if (searchResultData.isEmpty()){
+            // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered did not match any ID in the Inventory");
 
-
+                alert.showAndWait();
+                }
     }
+
+
     
+    // Searches the associated Part Tableview
+    public void handleAddProductSearchTableView2Event(){
+        ObservableList<Part> partData =  addProductTableView2.getItems();
+        ObservableList<Part> searchResultData = FXCollections.observableArrayList();
+        searchResultData.clear();
+        
+        int textFieldSearch = 0;
+        try{
+            textFieldSearch = Integer.parseInt(addProductSearchTextField2.getText());
+        }
+        catch (NumberFormatException nfe){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Match");
+            alert.setHeaderText("No Part Found");
+            alert.setContentText("The ID entered was not valid");
+
+            alert.showAndWait();  
+        }
+        for (Part part : partData){
+            if(part.getPartID() == textFieldSearch){
+                searchResultData.add(part);
+                addProductTableView2.setItems((searchResultData));
+            }
+        }
+            if (searchResultData.isEmpty()){
+            // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered did not match any ID in the Inventory");
+
+                alert.showAndWait();
+                }
+    }
+        
+
+
  
 }

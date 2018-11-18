@@ -3,7 +3,6 @@ package View_Controller;
 import Model.MainApp;
 import Model.InHouse;
 import Model.Part;
-import Model.Inventory;
 //import Model.MainApp;
 import Model.OutSourced;
 import View_Controller.MainScreenController;
@@ -104,14 +103,15 @@ public class AddPartController implements Initializable {
     private MainApp mainApp;
     private ObservableList<Part> tempParts = FXCollections.observableArrayList();
 
-
+    //Sets textfield label based on what radio button is selected
     @FXML
     void handleAddPartInHouseButtonEvent(ActionEvent event) {
         addPartDecisionLabel.setText("Machine ID");
         addPartDecisionTextField.clear();
 
     }
-
+    
+    //Sets textfield label based on what radio button is selected
     @FXML
     void handleAddPartOutSourcedButtonEvent(ActionEvent event) {
         addPartDecisionLabel.setText("Company Name");
@@ -150,20 +150,8 @@ public class AddPartController implements Initializable {
         this.dialogStage = dialogStage;
     }
 
-
-
     /**
-     * Returns true if the user clicked OK, false otherwise.
-     * 
-     * @return
-     */
-    public boolean isSaveClicked(){
-        return saveClicked;
-    }
-    
-
-    /**
-     * Called when the user clicks ok.
+     * Called when the user clicks save.
      */
     @FXML
     private void handleAddPartSaveEvent(ActionEvent event) {
@@ -174,21 +162,23 @@ public class AddPartController implements Initializable {
         int max = Integer.parseInt(addPartMaxTextField.getText());
         int min = Integer.parseInt(addPartMinTextField.getText());
         int inStock = Integer.parseInt(addPartInvTextField.getText());
-        if ( checkValid() && addPartInHouseButtonLabel.isSelected()) {
-            int machineID = Integer.parseInt(addPartDecisionTextField.getText());
-            part = new InHouse(partID,partName, price, inStock, min, max, machineID);
+        if(checkValid()){
+            if ( addPartInHouseButtonLabel.isSelected()) {
+                int machineID = Integer.parseInt(addPartDecisionTextField.getText());
+                part = new InHouse(partID,partName, price, inStock, min, max, machineID);
             
-            tempParts.add(part);
-            saveClicked = true;
-            dialogStage.close();
-        }
-        else if(checkValid() && addPartOutSourcedButtonLabel.isSelected()){
-            String companyName = addPartDecisionTextField.getText();
-            part = new OutSourced(partID,partName, price, inStock, min, max, companyName);
+                tempParts.add(part);
+                saveClicked = true;
+                dialogStage.close();
+            }
+            else if(addPartOutSourcedButtonLabel.isSelected()){
+                String companyName = addPartDecisionTextField.getText();
+                part = new OutSourced(partID,partName, price, inStock, min, max, companyName);
             
-            tempParts.add(part);
-            saveClicked = true;
-            dialogStage.close();
+                tempParts.add(part);
+                saveClicked = true;
+                dialogStage.close();
+            }
         }
     }
 
@@ -201,10 +191,10 @@ public class AddPartController implements Initializable {
     }
 
     /**
-     * Validates the user input in the text fields.
+     * Validates the user input in the text fields, based on the criteria
+     * that min values must be less than max values
      * 
-     * @return true if the input is valid
-     * 
+     *
      */
     
     private boolean checkValid() {
@@ -225,69 +215,6 @@ public class AddPartController implements Initializable {
 
 
     }
-
-//    private boolean isInputValid() {
-//        String errorMessage = "";
-//        //ArrayList<String> errorList = new ArrayList<String>();
-//        
-//
-////        if (addPartIDTextField.getText() == null || addPartIDTextField.getText().length() == 0) {
-////            errorMessage += "Not a valid ID: Please Enter an ID\n";
-////            errorList.add(errorMessage);
-////        }
-////        if (addPartNameTextField.getText() == null || addPartNameTextField.getText().length() == 0) {
-////            errorMessage += "Not a valid Name: Please Enter a Name\n";
-////            errorList.add(errorMessage);
-////        }
-////        if (addPartPriceTextField.getText() == null || addPartPriceTextField.getText().length() == 0) {
-////            errorMessage += "Not a valid Price: Please Enter a Price\n";
-////            errorList.add(errorMessage);
-////        }
-////
-////        if (addPartMaxTextField.getText() == null || addPartMaxTextField.getText().length() == 0) {
-////            errorMessage += "Not a valid Max Value\n";
-////            errorList.add(errorMessage);
-//////        } else {
-//////            // try to parse the postal code into an int.
-//////            try {
-//////                Integer.parseInt(addPartMaxTextField.getText());
-//////            } catch (NumberFormatException e) {
-//////                errorMessage += "No valid postal code (must be an integer)!\n"; 
-//////            }
-////        }
-//
-//        if (addPartMinTextField.getText() == null || addPartMinTextField.getText().length() == 0 || 
-//            Integer.parseInt(addPartMinTextField.getText()) > Integer.parseInt(addPartMaxTextField.getText())) {
-//            errorMessage += "Not a valid Min/Max value: Min Value must be less than Max Value \n";
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.initOwner(dialogStage);
-//            alert.setTitle("Invalid TextFields");
-//            alert.setHeaderText("Please Fix TextField Errors");
-//            alert.setContentText(errorMessage);
-//            alert.showAndWait();
-//            return false;
-//            //errorList.add(errorMessage);
-//        }
-//
-//
-////        if (addPartInvTextField.getText() == null || addPartInvTextField.getText().length() == 0) {
-////            errorMessage += "Not a valid Inventory Value\n";
-////            errorList.add(errorMessage);
-////        }
-//
-////        if (errorMessage.length() == 0) {
-////            return true;
-////        } else {
-//            // Show the error message.
-////            Alert alert = new Alert(Alert.AlertType.ERROR);
-////            alert.initOwner(dialogStage);
-////            alert.setTitle("Invalid TextFields");
-////            alert.setHeaderText("Please Fix TextField Errors");
-////            alert.setContentText(errorMessage);
-////            alert.showAndWait();
-//            
-//            return true;
-//        }
 
     
     public Part getPart(){

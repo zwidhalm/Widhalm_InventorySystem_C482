@@ -167,20 +167,11 @@ public class ModifyProductController implements Initializable {
 
 
     /**
-     * Returns true if the user clicked OK, false otherwise.
-     * 
-     * @return
-     */
-    public boolean isSaveClicked(){
-        return saveClicked;
-    }
-
-    /**
      * Called when the user clicks save.
      */
     @FXML
     private void handleModifyProductSaveButtonEvent(ActionEvent event) {
-        if (isInputValid()) {
+        if (checkValid()) {
             tempModifiedProducts.clear();
             int productID = Integer.parseInt(modifyProductIDTextfield.getText());
             String productName = modifyProductNameTextField.getText();
@@ -210,6 +201,7 @@ public class ModifyProductController implements Initializable {
         dialogStage.close();
     }
     
+    
     @FXML
     private void handleModifyProductDeleteButtonEvent(ActionEvent event){
         int selectedIndex = modifyProductTableView2.getSelectionModel().getSelectedIndex();
@@ -230,6 +222,8 @@ public class ModifyProductController implements Initializable {
         }        
     }
     
+    //Adds parts from main tableview to associated parts tableview
+    
     @FXML
     private void handleModifyProductAddButtonEvent(ActionEvent event){
         Part selectedPart = modifyProductTableView1.getSelectionModel().getSelectedItem();
@@ -238,64 +232,27 @@ public class ModifyProductController implements Initializable {
         
     }
 
-    /**
-     * Validates the user input in the text fields.
-     * 
-     * @return true if the input is valid
-     */
-    private boolean isInputValid() {
-        String errorMessage = "";
-
-        if (modifyProductIDTextfield.getText() == null || modifyProductIDTextfield.getText().length() == 0) {
-            errorMessage += "Not a valid ID\n"; 
+    //Checks that input is valid based on the criteria that products price must be greater than parts price
+    private boolean checkValid(){
+        ObservableList<Part> partData =  modifyProductTableView2.getItems();
+        double price = Double.parseDouble(modifyProductPriceTextField.getText());
+        for(Part part : partData){
+            if(part.getPartPrice() > price){
+                String errorMessage = "Not a valid Price: Product Price Value must be greater than Part Price Value\n";
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.initOwner(dialogStage);
+                alert.setTitle("Invalid TextFields");
+                alert.setHeaderText("Please Fix TextField Errors");
+                alert.setContentText(errorMessage);
+                alert.showAndWait();
+                return false;
+            }
         }
-        if (modifyProductNameTextField.getText() == null || modifyProductNameTextField.getText().length() == 0) {
-            errorMessage += "Not a valid Name\n"; 
-        }
-        if (modifyProductPriceTextField.getText() == null || modifyProductPriceTextField.getText().length() == 0) {
-            errorMessage += "Not a valid Price\n"; 
-        }
-
-        if (modifyProductPriceMaxField.getText() == null || modifyProductPriceMaxField.getText().length() == 0) {
-            errorMessage += "Not a valid Max value\n"; 
-//        } else {
-//            // try to parse the postal code into an int.
-//            try {
-//                Integer.parseInt(addProductPriceMaxField.getText());
-//            } catch (NumberFormatException e) {
-//                errorMessage += "No valid postal code (must be an integer)!\n"; 
-//            }
-        }
-
-        if (modifyProductMinTextField.getText() == null || modifyProductMinTextField.getText().length() == 0 || 
-                Integer.parseInt(modifyProductMinTextField.getText()) > Integer.parseInt(modifyProductPriceMaxField.getText())) {
-            errorMessage += "Not a valid Min value \n"; 
-        }
-
-        if (modifyProductInvTextField.getText() == null || modifyProductInvTextField.getText().length() == 0) {
-            errorMessage += "Not a valid Inventory value\n";
-        }
-
-        if (errorMessage.length() == 0) {
-            return true;
-        } else {
-            // Show the error message.
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(dialogStage);
-            alert.setTitle("Invalid TextFields");
-            alert.setHeaderText("Please Fix TextField Errors");
-            alert.setContentText(errorMessage);
-            
-            alert.showAndWait();
-            
-            return false;
-        }
+        return true;
     }
     
     public void setProduct(Product product) {
-        //this.product = product;
-        
-        
+
         modifyProductIDTextfield.setText(Integer.toString(product.getProductID()));
         modifyProductNameTextField.setText(product.getName());
         modifyProductPriceTextField.setText(Double.toString(product.getPrice()));
@@ -309,10 +266,8 @@ public class ModifyProductController implements Initializable {
     
     public void setMainApp(MainApp mainApp){
         this.mainApp = mainApp;
-        
         modifyProductTableView1.setItems(mainApp.getPartData());
-       
-        
+
     }
     
     public Product getModifiedProduct(){

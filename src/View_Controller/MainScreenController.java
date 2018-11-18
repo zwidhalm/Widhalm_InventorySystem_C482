@@ -2,7 +2,6 @@ package View_Controller;
 
 
 import Model.InHouse;
-import Model.Inventory;
 import Model.Part;
 import Model.Product;
 import java.io.IOException;
@@ -34,12 +33,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 
 
-//TO DO:
-//Fix search feature to display error code properly
-//Fix Save feature to add exception controls for invalid input types
-//fix save feature to not allow parts to have the same part ID
-//
-//
 
 public class MainScreenController implements Initializable {
 
@@ -119,7 +112,7 @@ public class MainScreenController implements Initializable {
     private MainApp mainApp;
     
 
-    //opens the add part screen
+    //opens the add part screen through reference to main app
     @FXML
     void handleMainAddPartEvent(ActionEvent event) throws IOException {
         populateTable();
@@ -128,7 +121,7 @@ public class MainScreenController implements Initializable {
 
     }
     
-    //opens the add product screen
+    //opens the add product screen through refernce to main app
     @FXML
     void handleMainAddProductEvent(ActionEvent event) throws IOException {
         populateTable();
@@ -137,7 +130,7 @@ public class MainScreenController implements Initializable {
 
     }
     
-    //opens deletes the selected 
+    //deletes selected part
     @FXML
     void handleMainDeletePartEvent(ActionEvent event) {
         int selectedIndex = mainPartTableView.getSelectionModel().getSelectedIndex();
@@ -158,6 +151,7 @@ public class MainScreenController implements Initializable {
 
     }
     
+    //deletes selected product
     @FXML
     void handleMainProductDeleteEvent(ActionEvent event){
         int selectedIndex = mainProductTableView.getSelectionModel().getSelectedIndex();
@@ -177,7 +171,7 @@ public class MainScreenController implements Initializable {
         }
 
     }
-
+    //opens Modify Part screen through reference to main app
     @FXML
     void handleMainModifyPartEvent(ActionEvent event) throws IOException {
         populateTable();
@@ -202,7 +196,7 @@ public class MainScreenController implements Initializable {
     }
 
     
-
+    //opens Modify Product screen through reference to main app
     @FXML
     void handleMainModifyProductsEvent(ActionEvent event) throws IOException {
         populateTable();
@@ -224,11 +218,15 @@ public class MainScreenController implements Initializable {
         }
         populateTable();
     }
-
+    /**
+     * 
+     * Searches through the Parts tableview and displays results 
+     */
     @FXML
     void handleMainPartSeachEvent(ActionEvent event) {
         ObservableList<Part> partData =  mainPartTableView.getItems();
         ObservableList<Part> searchResultData = FXCollections.observableArrayList();
+        searchResultData.clear();
         
         int textFieldSearch = 0;
             try{
@@ -245,12 +243,11 @@ public class MainScreenController implements Initializable {
             }
             for (Part part : partData){
                 if(part.getPartID() == textFieldSearch){
-                    searchResultData.clear();
                     searchResultData.add(part);
                     mainPartTableView.setItems((searchResultData));
-                
                 }
-                else {
+            }
+            if(searchResultData.isEmpty()) {
             // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.initOwner(mainApp.getPrimaryStage());
@@ -260,20 +257,26 @@ public class MainScreenController implements Initializable {
 
                 alert.showAndWait();
                 }
-            }
+        }
+    
+            
         
      
 
-    }
 
+    /**
+     * 
+     * Searches through the Products tableview and displays results 
+     */
     @FXML
     void handleMainProductsSearchEvent(ActionEvent event) {
         ObservableList<Product> productData =  mainProductTableView.getItems();
         ObservableList<Product> searchResultData = FXCollections.observableArrayList();
+        searchResultData.clear();
         
-            int textFieldSearch = 0;
+        int textFieldSearch = 0;
             try{
-                textFieldSearch = Integer.parseInt(mainProductsSearchTextfield.getText());
+            textFieldSearch = Integer.parseInt(mainProductsSearchTextfield.getText());
             } catch (NumberFormatException nfe){
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.initOwner(mainApp.getPrimaryStage());
@@ -286,12 +289,11 @@ public class MainScreenController implements Initializable {
             }
             for (Product product : productData){
                 if(product.getProductID() == textFieldSearch){
-                    searchResultData.clear();
                     searchResultData.add(product);
                     mainProductTableView.setItems((searchResultData));
-                
                 }
-                else {
+            }
+            if(searchResultData.isEmpty()) {
             // Nothing selected.
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.initOwner(mainApp.getPrimaryStage());
@@ -300,10 +302,7 @@ public class MainScreenController implements Initializable {
                 alert.setContentText("The ID entered did not match any ID in the Inventory");
 
                 alert.showAndWait();
-            }
-        }
-        
-     
+                }
 
     }
 
@@ -315,7 +314,7 @@ public class MainScreenController implements Initializable {
     
 
     
-
+    //references Main App to disply current Part and Product data
     public void setMainApp(MainApp mainApp) {
         this.mainApp = mainApp;
 

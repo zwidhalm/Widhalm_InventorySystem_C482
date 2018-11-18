@@ -1,6 +1,6 @@
 package Model;
 
-import static Model.Inventory.products;
+
 import View_Controller.AddPartController;
 import View_Controller.MainScreenController;
 import View_Controller.ModifyPartController;
@@ -29,10 +29,7 @@ public class MainApp extends Application {
     private ObservableList<Product> tempProducts = FXCollections.observableArrayList();
     private ObservableList<Part> allParts = FXCollections.observableArrayList();
     private ObservableList<Part> tempParts = FXCollections.observableArrayList();
-    //private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
-    //private Map<Product, List<Part>> map = new HashMap<Product,List<Part>>();
-    //private ObservableMap<Product, List<Part>> associatedParts = 
-    
+
 
 
     @Override
@@ -42,8 +39,6 @@ public class MainApp extends Application {
      
 
         initRootLayout();
-
-//        showPersonOverview();
     }
     
     /**
@@ -71,23 +66,6 @@ public class MainApp extends Application {
         }
     }
 
-    /**
-     * Shows the person overview inside the root layout.
-     */
-//    public void showPersonOverview() {
-//        try {
-//            // Load person overview.
-//            FXMLLoader loader = new FXMLLoader();
-//            loader.setLocation(MainApp.class.getResource("view/PersonOverview.fxml"));
-//            AnchorPane personOverview = (AnchorPane) loader.load();
-//            
-//            // Set person overview into the center of root layout.
-//            rootLayout.setCenter(personOverview);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-    
     /**
      * Returns the main stage.
      * @return
@@ -139,14 +117,7 @@ public class MainApp extends Application {
     public void addProduct(Product product){
         products.add(product);
     }
-    
-//    public void addAssociatedPart(Part part){
-//        associatedParts.add(part);
-//    }
-//    
-////    public ObservableList<Part> getAssociatedPart(){
-////        return associatedParts;
-////    }
+
     
     public Part showAddPartScreen() {
         try {
