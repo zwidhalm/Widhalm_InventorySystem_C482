@@ -19,7 +19,7 @@ import javafx.collections.ObservableList;
  * @author Zach
  */
 public class Product {
-    private static ObservableList<Product> associatedProducts = FXCollections.observableArrayList();
+    private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
     private IntegerProperty productID = new SimpleIntegerProperty();
     private StringProperty name = new SimpleStringProperty();
     private DoubleProperty price = new SimpleDoubleProperty();
@@ -109,6 +109,22 @@ public class Product {
     
     public IntegerProperty maxProperty(){
         return max;
+    }
+    
+    public void addPart(Part part){
+        associatedParts.add(part);
+    }
+    
+    public void deletePart(Part part){
+        associatedParts.remove(part);
+    }    
+    
+    public ObservableList<Part> getPart(){
+        return associatedParts;
+    }
+    
+    public void clearList(){
+        associatedParts.clear();
     }
     
     

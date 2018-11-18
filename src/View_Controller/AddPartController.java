@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.lang.String;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -101,7 +102,7 @@ public class AddPartController implements Initializable {
     private Stage dialogStage;
     private boolean saveClicked = false;
     private MainApp mainApp;
-    private  ObservableList<Part> tempParts = FXCollections.observableArrayList();
+    private ObservableList<Part> tempParts = FXCollections.observableArrayList();
 
 
     @FXML
@@ -166,23 +167,24 @@ public class AddPartController implements Initializable {
      */
     @FXML
     private void handleAddPartSaveEvent(ActionEvent event) {
+        tempParts.clear();
         int partID = Integer.parseInt(addPartIDTextField.getText());
         String partName = addPartNameTextField.getText();
         Double price = Double.parseDouble(addPartPriceTextField.getText());
         int max = Integer.parseInt(addPartMaxTextField.getText());
         int min = Integer.parseInt(addPartMinTextField.getText());
         int inStock = Integer.parseInt(addPartInvTextField.getText());
-        if ( addPartInHouseButtonLabel.isSelected()) {
+        if ( checkValid() && addPartInHouseButtonLabel.isSelected()) {
             int machineID = Integer.parseInt(addPartDecisionTextField.getText());
-            part = new InHouse(partID,partName, price, max, min, inStock, machineID);
+            part = new InHouse(partID,partName, price, inStock, min, max, machineID);
             
             tempParts.add(part);
             saveClicked = true;
             dialogStage.close();
         }
-        else if(addPartOutSourcedButtonLabel.isSelected()){
+        else if(checkValid() && addPartOutSourcedButtonLabel.isSelected()){
             String companyName = addPartDecisionTextField.getText();
-            part = new OutSourced(partID,partName, price, max, min, inStock, companyName);
+            part = new OutSourced(partID,partName, price, inStock, min, max, companyName);
             
             tempParts.add(part);
             saveClicked = true;
@@ -202,55 +204,91 @@ public class AddPartController implements Initializable {
      * Validates the user input in the text fields.
      * 
      * @return true if the input is valid
+     * 
      */
-    private boolean isInputValid() {
-        String errorMessage = "";
-
-        if (addPartIDTextField.getText() == null || addPartIDTextField.getText().length() == 0) {
-            errorMessage += "Not a valid ID\n"; 
-        }
-        if (addPartNameTextField.getText() == null || addPartNameTextField.getText().length() == 0) {
-            errorMessage += "Not a valid Name\n"; 
-        }
-        if (addPartPriceTextField.getText() == null || addPartPriceTextField.getText().length() == 0) {
-            errorMessage += "Not a valid Price\n"; 
-        }
-
-        if (addPartMaxTextField.getText() == null || addPartMaxTextField.getText().length() == 0) {
-            errorMessage += "Not a valid Max value\n"; 
-//        } else {
-//            // try to parse the postal code into an int.
-//            try {
-//                Integer.parseInt(addPartMaxTextField.getText());
-//            } catch (NumberFormatException e) {
-//                errorMessage += "No valid postal code (must be an integer)!\n"; 
-//            }
-        }
+    
+    private boolean checkValid() {
 
         if (addPartMinTextField.getText() == null || addPartMinTextField.getText().length() == 0 || 
-                Integer.parseInt(addPartMinTextField.getText()) > Integer.parseInt(addPartMaxTextField.getText())) {
-            errorMessage += "Not a valid Min value \n"; 
-        }
-
-        if (addPartInvTextField.getText() == null || addPartInvTextField.getText().length() == 0) {
-            errorMessage += "Not valid Inventory Value\n";
-        }
-
-        if (errorMessage.length() == 0) {
-            return true;
-        } else {
-            // Show the error message.
+            Integer.parseInt(addPartMinTextField.getText()) > Integer.parseInt(addPartMaxTextField.getText())) {
+            String errorMessage = "Not a valid Min/Max value: Min Value must be less than Max Value \n";
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(dialogStage);
             alert.setTitle("Invalid TextFields");
             alert.setHeaderText("Please Fix TextField Errors");
             alert.setContentText(errorMessage);
-            
             alert.showAndWait();
-            
             return false;
+
         }
+        return true;
+
+
     }
+
+//    private boolean isInputValid() {
+//        String errorMessage = "";
+//        //ArrayList<String> errorList = new ArrayList<String>();
+//        
+//
+////        if (addPartIDTextField.getText() == null || addPartIDTextField.getText().length() == 0) {
+////            errorMessage += "Not a valid ID: Please Enter an ID\n";
+////            errorList.add(errorMessage);
+////        }
+////        if (addPartNameTextField.getText() == null || addPartNameTextField.getText().length() == 0) {
+////            errorMessage += "Not a valid Name: Please Enter a Name\n";
+////            errorList.add(errorMessage);
+////        }
+////        if (addPartPriceTextField.getText() == null || addPartPriceTextField.getText().length() == 0) {
+////            errorMessage += "Not a valid Price: Please Enter a Price\n";
+////            errorList.add(errorMessage);
+////        }
+////
+////        if (addPartMaxTextField.getText() == null || addPartMaxTextField.getText().length() == 0) {
+////            errorMessage += "Not a valid Max Value\n";
+////            errorList.add(errorMessage);
+//////        } else {
+//////            // try to parse the postal code into an int.
+//////            try {
+//////                Integer.parseInt(addPartMaxTextField.getText());
+//////            } catch (NumberFormatException e) {
+//////                errorMessage += "No valid postal code (must be an integer)!\n"; 
+//////            }
+////        }
+//
+//        if (addPartMinTextField.getText() == null || addPartMinTextField.getText().length() == 0 || 
+//            Integer.parseInt(addPartMinTextField.getText()) > Integer.parseInt(addPartMaxTextField.getText())) {
+//            errorMessage += "Not a valid Min/Max value: Min Value must be less than Max Value \n";
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.initOwner(dialogStage);
+//            alert.setTitle("Invalid TextFields");
+//            alert.setHeaderText("Please Fix TextField Errors");
+//            alert.setContentText(errorMessage);
+//            alert.showAndWait();
+//            return false;
+//            //errorList.add(errorMessage);
+//        }
+//
+//
+////        if (addPartInvTextField.getText() == null || addPartInvTextField.getText().length() == 0) {
+////            errorMessage += "Not a valid Inventory Value\n";
+////            errorList.add(errorMessage);
+////        }
+//
+////        if (errorMessage.length() == 0) {
+////            return true;
+////        } else {
+//            // Show the error message.
+////            Alert alert = new Alert(Alert.AlertType.ERROR);
+////            alert.initOwner(dialogStage);
+////            alert.setTitle("Invalid TextFields");
+////            alert.setHeaderText("Please Fix TextField Errors");
+////            alert.setContentText(errorMessage);
+////            alert.showAndWait();
+//            
+//            return true;
+//        }
+
     
     public Part getPart(){
         return tempParts.get(0);

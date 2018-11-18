@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.AddProductController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View_Controller.AddProductController">
    <children>
       <TableView fx:id="addProductTableView1" layoutX="238.0" layoutY="46.0" prefHeight="176.0" prefWidth="303.0">
         <columns>
@@ -29,9 +29,9 @@
             <TableColumn fx:id="addProductPricePerUnitColumn2" prefWidth="75.0" text="Price Per Unit" />
         </columns>
       </TableView>
-      <Button fx:id="addProductSearchTableView" layoutX="323.0" layoutY="14.0" mnemonicParsing="false" text="Search" />
+      <Button fx:id="addProductSearchTableView" layoutX="323.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleAddProductSearchTableViewEvent" text="Search" />
       <TextField fx:id="addProductSearchTextField" layoutX="375.0" layoutY="14.0" />
-      <Button fx:id="addProductSearchTableView2" layoutX="323.0" layoutY="275.0" mnemonicParsing="false" text="Search" />
+      <Button fx:id="addProductSearchTableView2" layoutX="323.0" layoutY="275.0" mnemonicParsing="false" onAction="#handleAddProductSearchTableView2Event" text="Search" />
       <TextField fx:id="addProductSearchTextField2" layoutX="375.0" layoutY="275.0" />
       <Label fx:id="addProductLabel" layoutX="28.0" layoutY="18.0" prefHeight="44.0" prefWidth="162.0" text="Add Product">
          <font>

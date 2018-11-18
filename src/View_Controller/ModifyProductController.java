@@ -1,28 +1,22 @@
 package View_Controller;
 
-import Model.InHouse;
-import Model.Inventory;
-import Model.OutSourced;
+import Model.MainApp;
 import Model.Part;
 import Model.Product;
-import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 public class ModifyProductController implements Initializable {
@@ -97,7 +91,7 @@ public class ModifyProductController implements Initializable {
     private Label modifyProductCompanyName;
 
     @FXML
-    private TextField modifyProductIDTextField;
+    private TextField modifyProductIDTextfield;
 
     @FXML
     private TextField modifyProductNameTextField;
@@ -133,14 +127,12 @@ public class ModifyProductController implements Initializable {
     private TextField modifyProductMinTextField;
     
     private Product product;
+    private MainApp mainApp;
     private Stage dialogStage;
     private boolean saveClicked;
-   
+    private ObservableList<Product> tempModifiedProducts = FXCollections.observableArrayList();
+    private ObservableList<Part> tempParts = FXCollections.observableArrayList();
 
-
-
-
-    
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -157,6 +149,7 @@ public class ModifyProductController implements Initializable {
         modifyProductPartNameColumn2.setCellValueFactory(cellData -> cellData.getValue().partNameProperty());
         modifyProductInventoryColumn2.setCellValueFactory(cellData -> cellData.getValue().stockProperty().asObject());
         modifyProductPricePerUnitColumn2.setCellValueFactory(cellData -> cellData.getValue().priceProperty().asObject());
+
         
 
         
@@ -183,17 +176,25 @@ public class ModifyProductController implements Initializable {
     }
 
     /**
-     * Called when the user clicks ok.
+     * Called when the user clicks save.
      */
     @FXML
-    private void handleProductSaveEvent(ActionEvent event) {
+    private void handleModifyProductSaveButtonEvent(ActionEvent event) {
         if (isInputValid()) {
-            product.setProductID(Integer.parseInt(modifyProductIDTextField.getText()));
-            product.setProductName(modifyProductNameTextField.getText());
-            product.setProductPrice(Double.parseDouble(modifyProductPriceTextField.getText()));
-            product.setMax(Integer.parseInt(modifyProductPriceMaxField.getText()));
-            product.setMin(Integer.parseInt(modifyProductMinTextField.getText()));
-            product.setInStock(Integer.parseInt(modifyProductInvTextField.getText()));
+            tempModifiedProducts.clear();
+            int productID = Integer.parseInt(modifyProductIDTextfield.getText());
+            String productName = modifyProductNameTextField.getText();
+            double productPrice = Double.parseDouble(modifyProductPriceTextField.getText());
+            int max = Integer.parseInt(modifyProductPriceMaxField.getText());
+            int min = Integer.parseInt(modifyProductMinTextField.getText());
+            int inStock = Integer.parseInt(modifyProductInvTextField.getText());
+            
+            product = new Product(productID, productName, productPrice, max, min, inStock);
+            
+            updateAssociatedParts(product);
+            tempModifiedProducts.add(product);
+            tempParts.clear();
+            
             
 
             saveClicked = true;
@@ -205,8 +206,36 @@ public class ModifyProductController implements Initializable {
      * Called when the user clicks cancel.
      */
     @FXML
-    private void handleAppPartCancelEvent(ActionEvent event) {
+    private void handleModifyProductCancelButtonEvent(ActionEvent event) {
         dialogStage.close();
+    }
+    
+    @FXML
+    private void handleModifyProductDeleteButtonEvent(ActionEvent event){
+        int selectedIndex = modifyProductTableView2.getSelectionModel().getSelectedIndex();
+        Part selectedPart = modifyProductTableView2.getSelectionModel().getSelectedItem();
+        if (selectedIndex >= 0) {
+            modifyProductTableView2.getItems().remove(selectedIndex);
+            tempParts.remove(selectedPart);
+            modifyProductTableView2.setItems(getTempPart());
+        } else {
+        // Nothing selected.
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Selection");
+            alert.setHeaderText("No Person Selected");
+            alert.setContentText("Please select a person in the table.");
+
+            alert.showAndWait();
+        }        
+    }
+    
+    @FXML
+    private void handleModifyProductAddButtonEvent(ActionEvent event){
+        Part selectedPart = modifyProductTableView1.getSelectionModel().getSelectedItem();
+        tempParts.add(selectedPart);
+        modifyProductTableView2.setItems(getTempPart());
+        
     }
 
     /**
@@ -217,7 +246,7 @@ public class ModifyProductController implements Initializable {
     private boolean isInputValid() {
         String errorMessage = "";
 
-        if (modifyProductIDTextField.getText() == null || modifyProductIDTextField.getText().length() == 0) {
+        if (modifyProductIDTextfield.getText() == null || modifyProductIDTextfield.getText().length() == 0) {
             errorMessage += "Not a valid ID\n"; 
         }
         if (modifyProductNameTextField.getText() == null || modifyProductNameTextField.getText().length() == 0) {
@@ -264,16 +293,164 @@ public class ModifyProductController implements Initializable {
     }
     
     public void setProduct(Product product) {
-        this.product = product;
+        //this.product = product;
         
         
-        modifyProductIDTextField.setText(Integer.toString(product.getProductID()));
+        modifyProductIDTextfield.setText(Integer.toString(product.getProductID()));
         modifyProductNameTextField.setText(product.getName());
         modifyProductPriceTextField.setText(Double.toString(product.getPrice()));
         modifyProductPriceMaxField.setText(Integer.toString(product.getMax()));
         modifyProductMinTextField.setText(Integer.toString(product.getMin()));
+        modifyProductInvTextField.setText(Integer.toString(product.getInStock()));
+        modifyProductTableView2.setItems(product.getPart());
+
         
     }
+    
+    public void setMainApp(MainApp mainApp){
+        this.mainApp = mainApp;
+        
+        modifyProductTableView1.setItems(mainApp.getPartData());
+       
+        
+    }
+    
+    public Product getModifiedProduct(){
+        return tempModifiedProducts.get(0);
+    }
+    
+    public void addProduct(Product product){
+        tempModifiedProducts.add(product);
+    }
+    
+    public ObservableList<Part> getTempPart(){
+        return tempParts;
+    }
+
+    private void updateAssociatedParts(Product product) {
+        product.clearList();
+        for (Part part : tempParts){
+            product.addPart(part);
+        }
+    }
+    
+    public void handleModifyProductSearchTableView1(){
+        ObservableList<Part> partData =  modifyProductTableView1.getItems();
+        ObservableList<Part> searchResultData = FXCollections.observableArrayList();
+        
+        
+        int textFieldSearch = 0;
+            try{
+            textFieldSearch = Integer.parseInt(modifyProductSearchTextField.getText());
+            } catch (NumberFormatException nfe){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered was not valid");
+
+                alert.showAndWait();
+                
+            }
+            for (Part part : partData){
+                if(part.getPartID() == textFieldSearch){
+                    searchResultData.clear();
+                    searchResultData.add(part);
+                    modifyProductTableView1.setItems((searchResultData));
+                
+                }
+                else {
+            // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered did not match any ID in the Inventory");
+
+                alert.showAndWait();
+                }
+            }
+
+    }
+    
+    public void handleModifyProductSearchTableView2(){
+        ObservableList<Part> partData =  modifyProductTableView2.getItems();
+        ObservableList<Part> searchResultData = FXCollections.observableArrayList();
+        
+        int textFieldSearch = 0;
+            try{
+            textFieldSearch = Integer.parseInt(modifyProductSearchTextField.getText());
+            } catch (NumberFormatException nfe){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered was not valid");
+
+                alert.showAndWait();
+                
+            }
+            for (Part part : partData){
+                if(part.getPartID() == textFieldSearch){
+                    searchResultData.clear();
+                    searchResultData.add(part);
+                    modifyProductTableView2.setItems((searchResultData));
+                
+                }
+                else {
+            // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered did not match any ID in the Inventory");
+
+                alert.showAndWait();
+                }
+            }
+
+
+    }
+    
+    public void handleAddProductSearchTableView2(){
+        ObservableList<Part> partData =  modifyProductTableView2.getItems();
+        
+        try{
+            int textFieldSearch = Integer.parseInt(modifyProductSearchTextField2.getText());
+            for (Part part : partData){
+                if(part.getPartID() == textFieldSearch){
+                    partData.clear();
+                    partData.add(part);
+                    modifyProductTableView2.setItems((partData));
+                
+                }
+                else {
+            // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered did not match any ID in the Inventory");
+
+                alert.showAndWait();
+                }
+            }
+        
+            }
+        catch (NumberFormatException nfe){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("No Match");
+            alert.setHeaderText("No Part Found");
+            alert.setContentText("The ID entered was not valid");
+
+            alert.showAndWait();  
+        }
+    }
+    
+    
+    
+
    
 }
 

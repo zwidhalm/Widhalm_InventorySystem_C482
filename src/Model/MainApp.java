@@ -4,11 +4,14 @@ import static Model.Inventory.products;
 import View_Controller.AddPartController;
 import View_Controller.MainScreenController;
 import View_Controller.ModifyPartController;
+import View_Controller.AddProductController;
+import View_Controller.ModifyProductController;
 import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -22,10 +25,13 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private AnchorPane rootLayout;
-    private  ObservableList<Product> products = FXCollections.observableArrayList();
-    private  ObservableList<Product> tempProducts = FXCollections.observableArrayList();
-    private  ObservableList<Part> allParts = FXCollections.observableArrayList();
-    private  ObservableList<Part> tempParts = FXCollections.observableArrayList();
+    private ObservableList<Product> products = FXCollections.observableArrayList();
+    private ObservableList<Product> tempProducts = FXCollections.observableArrayList();
+    private ObservableList<Part> allParts = FXCollections.observableArrayList();
+    private ObservableList<Part> tempParts = FXCollections.observableArrayList();
+    //private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
+    //private Map<Product, List<Part>> map = new HashMap<Product,List<Part>>();
+    //private ObservableMap<Product, List<Part>> associatedParts = 
     
 
 
@@ -113,6 +119,35 @@ public class MainApp extends Application {
     public void addPart(Part part){
         allParts.add(part);
     }
+    
+    public int getPartIndex(Part part){
+        return allParts.indexOf(part);
+    }
+    
+    public void updatePart(int index, Part part){
+        allParts.set(index, part);
+    }
+    
+    public int getProductIndex(Product product){
+        return products.indexOf(product);
+    }
+    
+    public void updateProduct(int index, Product product){
+        products.set(index, product);
+    }
+    
+    public void addProduct(Product product){
+        products.add(product);
+    }
+    
+//    public void addAssociatedPart(Part part){
+//        associatedParts.add(part);
+//    }
+//    
+////    public ObservableList<Part> getAssociatedPart(){
+////        return associatedParts;
+////    }
+    
     public Part showAddPartScreen() {
         try {
         // Load the fxml file and create a new stage for the popup dialog.
@@ -145,7 +180,7 @@ public class MainApp extends Application {
     }
 
     
-    public boolean showModifyPartScreen(Part part) {
+    public Part showModifyPartScreen(Part part) {
         try {
         // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -163,19 +198,20 @@ public class MainApp extends Application {
         // Set the person into the controller.
             ModifyPartController controller = loader.getController();
             controller.setDialogStage(dialogStage);
+            controller.setPart(part);
 
 
         // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
 
-            return controller.isSaveClicked();
+            return controller.getModifiedPart();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return part;
         }
     }
     
-    public boolean showAddProductScreen(Product Product) {
+    public Product showAddProductScreen() {
         try {
         // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -191,21 +227,24 @@ public class MainApp extends Application {
             dialogStage.setScene(scene);
 
         // Set the person into the controller.
-            AddPartController controller = loader.getController();
+            AddProductController controller = loader.getController();
             controller.setDialogStage(dialogStage);
+            controller.setMainApp(this);
+            //controller.setProduct(this);
 
 
         // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
-
-            return controller.isSaveClicked();
+            return controller.getProduct();
+            
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            
+            return new Product();
         }
     }
         
-    public boolean showModifyProductScreen(Product Product) {
+    public Product showModifyProductScreen(Product product) {
         try {
         // Load the fxml file and create a new stage for the popup dialog.
             FXMLLoader loader = new FXMLLoader();
@@ -214,43 +253,31 @@ public class MainApp extends Application {
 
         // Create the dialog Stage.
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Add Product");
+            dialogStage.setTitle("Modify Product");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
+            
+
 
         // Set the person into the controller.
-            AddPartController controller = loader.getController();
+            ModifyProductController controller = loader.getController();
             controller.setDialogStage(dialogStage);
-            //controller.setProduct();
+            controller.setProduct(product);
+            controller.setMainApp(this);
 
 
         // Show the dialog and wait until the user closes it
             dialogStage.showAndWait();
-
-            return controller.isSaveClicked();
+            
+            return controller.getModifiedProduct();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return product;
         }
     }
-    
-    public int getPartIndex(Part part){
-        return allParts.indexOf(part);
-    }
-    
-    public void updatePart(int index, Part part){
-        allParts.set(index, part);
-    }
-    
-    public int getProductIndex(Product product){
-        return products.indexOf(product);
-    }
-    
-    public void updateProduct(int index, Product product){
-        products.set(index, product);
-    }
+
 
  
 }

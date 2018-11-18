@@ -25,11 +25,21 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import Model.MainApp;
 import Model.OutSourced;
+import java.util.List;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+
+
+//TO DO:
+//Fix search feature to display error code properly
+//Fix Save feature to add exception controls for invalid input types
+//fix save feature to not allow parts to have the same part ID
+//
+//
 
 public class MainScreenController implements Initializable {
 
@@ -107,45 +117,27 @@ public class MainScreenController implements Initializable {
     
     //private Part part;
     private MainApp mainApp;
-
-    
-   
-    
     
 
+    //opens the add part screen
     @FXML
     void handleMainAddPartEvent(ActionEvent event) throws IOException {
-        //InHouse inHousePart = new InHouse();
-        //OutSourced outSourcedPart = new OutSourced();
-        //boolean saveClicked= 
+        populateTable();
         Part part = mainApp.showAddPartScreen();
-//        if (saveClicked) {
-//            if(outSourcedPart == null){
-//            mainApp.getPartData().add(inHousePart);
-//            }
-//            else if(inHousePart == null){
-//                mainApp.getPartData().add(outSourcedPart);
-//
-//            }
-//        }
         mainApp.addPart(part);
-        
 
     }
     
-    
-
+    //opens the add product screen
     @FXML
     void handleMainAddProductEvent(ActionEvent event) throws IOException {
-        Product product = new Product();
-        boolean okClicked= mainApp.showAddProductScreen(product);
-        if (okClicked) {
-            mainApp.getProductData().add(product);
-        
-        }
+        populateTable();
+        Product product = mainApp.showAddProductScreen();
+        mainApp.addProduct(product);
 
     }
-
+    
+    //opens deletes the selected 
     @FXML
     void handleMainDeletePartEvent(ActionEvent event) {
         int selectedIndex = mainPartTableView.getSelectionModel().getSelectedIndex();
@@ -178,8 +170,8 @@ public class MainScreenController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("No Selection");
-            alert.setHeaderText("No Person Selected");
-            alert.setContentText("Please select a person in the table.");
+            alert.setHeaderText("No Product Selected");
+            alert.setContentText("Please select a product in the table.");
 
             alert.showAndWait();
         }
@@ -188,15 +180,15 @@ public class MainScreenController implements Initializable {
 
     @FXML
     void handleMainModifyPartEvent(ActionEvent event) throws IOException {
+        populateTable();
         Part selectedPart = mainPartTableView.getSelectionModel().getSelectedItem();
         int partIndex = mainApp.getPartIndex(selectedPart);
         if (selectedPart != null) {
-            boolean okClicked = mainApp.showModifyPartScreen(selectedPart);
-            if (okClicked) {
-            mainApp.updatePart(partIndex,selectedPart);
+            Part part = mainApp.showModifyPartScreen(selectedPart);
+            mainApp.updatePart(partIndex, part);
+            //populateTable();
             }
-
-        } else {
+        else {
             // Nothing selected.
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.initOwner(mainApp.getPrimaryStage());
@@ -206,44 +198,118 @@ public class MainScreenController implements Initializable {
 
             alert.showAndWait();
         }
+        populateTable();
     }
 
     
 
     @FXML
     void handleMainModifyProductsEvent(ActionEvent event) throws IOException {
+        populateTable();
         Product selectedProduct = mainProductTableView.getSelectionModel().getSelectedItem();
         int productIndex = mainApp.getProductIndex(selectedProduct);
         if (selectedProduct != null) {
-            boolean okClicked = mainApp.showModifyProductScreen(selectedProduct);
-            if (okClicked) {
-            mainApp.updateProduct(productIndex,selectedProduct);
+            Product product = mainApp.showModifyProductScreen(selectedProduct);
+            mainApp.updateProduct(productIndex, product);
             }
-
-        } else {
+        else {
             // Nothing selected.
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.initOwner(mainApp.getPrimaryStage());
             alert.setTitle("No Selection");
-            alert.setHeaderText("No Product Selected");
-            alert.setContentText("Please select a product in the table.");
+            alert.setHeaderText("No Part Selected");
+            alert.setContentText("Please select a part in the table.");
 
             alert.showAndWait();
         }
+        populateTable();
     }
 
     @FXML
     void handleMainPartSeachEvent(ActionEvent event) {
+        ObservableList<Part> partData =  mainPartTableView.getItems();
+        ObservableList<Part> searchResultData = FXCollections.observableArrayList();
+        
+        int textFieldSearch = 0;
+            try{
+            textFieldSearch = Integer.parseInt(mainPartSearchTextField.getText());
+            } catch (NumberFormatException nfe){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered was not valid");
+
+                alert.showAndWait();
+                
+            }
+            for (Part part : partData){
+                if(part.getPartID() == textFieldSearch){
+                    searchResultData.clear();
+                    searchResultData.add(part);
+                    mainPartTableView.setItems((searchResultData));
+                
+                }
+                else {
+            // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Part Found");
+                alert.setContentText("The ID entered did not match any ID in the Inventory");
+
+                alert.showAndWait();
+                }
+            }
+        
+     
 
     }
 
     @FXML
-    void handleMainProductsEvent(ActionEvent event) {
+    void handleMainProductsSearchEvent(ActionEvent event) {
+        ObservableList<Product> productData =  mainProductTableView.getItems();
+        ObservableList<Product> searchResultData = FXCollections.observableArrayList();
+        
+            int textFieldSearch = 0;
+            try{
+                textFieldSearch = Integer.parseInt(mainProductsSearchTextfield.getText());
+            } catch (NumberFormatException nfe){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Product Found");
+                alert.setContentText("The ID entered was not valid");
+
+                alert.showAndWait();
+                
+            }
+            for (Product product : productData){
+                if(product.getProductID() == textFieldSearch){
+                    searchResultData.clear();
+                    searchResultData.add(product);
+                    mainProductTableView.setItems((searchResultData));
+                
+                }
+                else {
+            // Nothing selected.
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.initOwner(mainApp.getPrimaryStage());
+                alert.setTitle("No Match");
+                alert.setHeaderText("No Product Found");
+                alert.setContentText("The ID entered did not match any ID in the Inventory");
+
+                alert.showAndWait();
+            }
+        }
+        
+     
 
     }
 
     @FXML
     void handleMainScreenExitEvent(ActionEvent event) {
+        Platform.exit();
 
     }
     
@@ -257,6 +323,12 @@ public class MainScreenController implements Initializable {
         mainPartTableView.setItems(mainApp.getPartData());
         mainProductTableView.setItems(mainApp.getProductData());
     }
+    
+    public void populateTable(){
+        mainPartTableView.setItems(mainApp.getPartData());
+        mainProductTableView.setItems(mainApp.getProductData());
+    }
+    
 
     
     @Override
@@ -271,38 +343,16 @@ public class MainScreenController implements Initializable {
         mainProductsInventoryColumn.setCellValueFactory(cellData -> cellData.getValue().productStockProperty().asObject());
         mainProductsPriceColumn.setCellValueFactory(cellData -> cellData.getValue().productPriceProperty().asObject());
         
-//        FilteredList<Part> filteredData = new FilteredList<>(masterPartData, p -> true);
-//        
-//        // 2. Set the filter Predicate whenever the filter changes.
-//        mainPartSearchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-//            filteredData.setPredicate(part -> {
-//                // If filter text is empty, display all persons.
-//                if (newValue == null || newValue.isEmpty()) {
-//                    return true;
-//                }
-//                
-//                // Compare first name and last name of every person with filter text.
-//                int partID = Integer.parseInt(newValue);
-//                
-//                if (part.getPartID() == partID) {
-//                    return true; // Filter matches first name.
-//                }
-//                return false; // Does not match.
-//            });
-//        });
-//        
-//        // 3. Wrap the FilteredList in a SortedList. 
-//        SortedList<Part> sortedData = new SortedList<>(filteredData);
-//        
-//        // 4. Bind the SortedList comparator to the TableView comparator.
-//        sortedData.comparatorProperty().bind(mainPartTableView.comparatorProperty());
-//        
-//        // 5. Add sorted (and filtered) data to the table.
-//        mainPartTableView.setItems(sortedData);  
-       
-    
     }
-
     
     
 }
+        
+
+
+  
+    
+
+    
+    
+

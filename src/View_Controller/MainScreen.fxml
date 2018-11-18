@@ -67,7 +67,7 @@
                               <Font name="Courier New Bold" size="14.0" />
                            </font>
                         </Label>
-                        <Button fx:id="mainProductsSearch" mnemonicParsing="false" onAction="#handleMainProductsEvent" text="Search" />
+                        <Button fx:id="mainProductsSearch" mnemonicParsing="false" onAction="#handleMainProductsSearchEvent" text="Search" />
                         <TextField fx:id="mainProductsSearchTextfield" />
                      </children>
                   </HBox>
